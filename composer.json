@@ -1,0 +1,29 @@
+{
+    "name": "endel/slim-lightncandy-View",
+    "type": "library",
+    "description": "Slim Framework view helper built on top of the Handlebars/Mustache template engines, via lightncandy.",
+    "keywords": ["slim","framework","view","template","handlebars","mustache"],
+    "homepage": "https://github.com/endel/slim-lightncandy-view",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Endel Dreyer",
+            "email": "endel.dreyer@gmail.com",
+            "homepage": "http://endel.me"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "pimple/pimple": "~3.0",
+        "zordius/lightncandy": "dev-master"
+    },
+    "require-dev": {
+        "slim/slim": "dev-develop",
+        "phpunit/phpunit": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Slim\\Views\\": "src"
+        }
+    }
+}
