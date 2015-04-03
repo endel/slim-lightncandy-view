@@ -1,0 +1,12 @@
+<p>Hi, my name is {{ name }}.</p>
+
+{{ link_to "url" "Text" class="class-name" }}
+
+{{> partial}}
+
+{{#form_for "article" method="post"}}
+  {{ input "name" }}
+  {{ input "author" }}
+  {{ textarea "body" }}
+  {{ input "Send" type="submit" }}
+{{/form_for}}

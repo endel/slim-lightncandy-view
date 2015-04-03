@@ -8,6 +8,11 @@
  */
 namespace Slim\Views;
 
+use LightnCandy as Engine;
+use LCRun3;
+
+use Exception;
+
 /**
  * Lightncandy View
  *
@@ -38,8 +43,8 @@ class Lightncandy implements \Pimple\ServiceProviderInterface
      *
      * @var SplStack
      */
-    public $context;
-    public $yield_blocks;
+    public static $context;
+    public static $yield_blocks;
 
     /**
      * template_string
@@ -70,10 +75,20 @@ class Lightncandy implements \Pimple\ServiceProviderInterface
      */
     public function __construct($path, $settings = [])
     {
-        $this->context = new SplStack();
-        $this->yield_blocks = array();
-        $this->helpers = new \Slim\Helper\Set($this->getHelpers());
-        $this->block_helpers = new \Slim\Helper\Set($this->getBlockHelpers());
+        static::$context = new \SplStack();
+        static::$yield_blocks = array();
+
+        array_push($this->directories, $path);
+
+        $this->helpers = $this->getHelpers();
+        if (isset($settings['helpers'])) {
+            $this->helpers = array_merge($this->helpers, $settings['helpers']);
+        }
+
+        $this->block_helpers = $this->getBlockHelpers();
+        if (isset($settings['helpers'])) {
+            $this->block_helpers = array_merge($this->block_helpers, $settings['block_helpers']);
+        }
     }
 
     /**
@@ -83,11 +98,6 @@ class Lightncandy implements \Pimple\ServiceProviderInterface
      */
     public function register(\Pimple\Container $container)
     {
-        // // Register urlFor Twig function
-        // $this->environment->addFunction(new \Twig_SimpleFunction('url_for', function ($name, $data = []) use ($container) {
-        //     return $container['router']->urlFor($name, $data);
-        // }));
-
         // Register this view with the Slim container
         $container['view'] = $this;
     }
@@ -107,18 +117,18 @@ class Lightncandy implements \Pimple\ServiceProviderInterface
     public function fetch($template, $data = [])
     {
         $data = array_merge($this->defaultVariables, $data);
-        $php = LightnCandy::compile($this->getTemplate($name), array(
-            'flags' => LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_ERROR_LOG |
-            LightnCandy::FLAG_INSTANCE |
-            LightnCandy::FLAG_MUSTACHE |
-            LightnCandy::FLAG_HANDLEBARS,
+        $php = Engine::compile($this->getTemplate($template), array(
+            'flags' => Engine::FLAG_ERROR_EXCEPTION | Engine::FLAG_ERROR_LOG |
+            Engine::FLAG_INSTANCE |
+            Engine::FLAG_MUSTACHE |
+            Engine::FLAG_HANDLEBARS,
             'basedir' => $this->directories,
             'fileext' => $this->extensions,
-            'helpers' => $this->helpers->all(),
-            'hbhelpers' => $this->block_helpers->all()
+            'helpers' => $this->helpers,
+            'hbhelpers' => $this->block_helpers
         ));
 
-        $renderer = LightnCandy::prepare($php);
+        $renderer = Engine::prepare($php);
         return $renderer(array_merge($data ?: array()), LCRun3::DEBUG_ERROR_LOG);
     }
 
@@ -141,27 +151,24 @@ class Lightncandy implements \Pimple\ServiceProviderInterface
     protected function getHelpers() {
         $helpers = array(
             // core helpers
-            'yield' => 'Hook\\View\\Helper::yieldContent',
+            'yield' => 'Slim\\Views\\Helpers\\Helper::yieldContent',
 
             // string helpers
-            'str_plural' => 'Hook\\View\\Helper::str_plural',
-            'str_singular' => 'Hook\\View\\Helper::str_singular',
-            'uppercase' => 'Hook\\View\\Helper::uppercase',
-            'lowercase' => 'Hook\\View\\Helper::lowercase',
-            'camel_case' => 'Hook\\View\\Helper::camel_case',
-            'snake_case' => 'Hook\\View\\Helper::snake_case',
+            'uppercase' => 'Slim\\Views\\Helpers\\Helper::uppercase',
+            'lowercase' => 'Slim\\Views\\Helpers\\Helper::lowercase',
 
             // url helpers
-            'link_to' => 'Hook\\View\\Helper::link_to',
-            'stylesheet' => 'Hook\\View\\Helper::stylesheet',
-            'javascript' => 'Hook\\View\\Helper::javascript',
+            'link_to' => 'Slim\\Views\\Helpers\\Helper::link_to',
+            'stylesheet' => 'Slim\\Views\\Helpers\\Helper::stylesheet',
+            'javascript' => 'Slim\\Views\\Helpers\\Helper::javascript',
 
             // form helpers
-            'input' => 'Hook\\View\\Helper::input',
-            'select' => 'Hook\\View\\Helper::select',
+            'input' => 'Slim\\Views\\Helpers\\Helper::input',
+            'textarea' => 'Slim\\Views\\Helpers\\Helper::textarea',
+            'select' => 'Slim\\Views\\Helpers\\Helper::select',
 
             // data helpers
-            'count' => 'Hook\\View\\Helper::count',
+            'count' => 'Slim\\Views\\Helpers\\Helper::count',
         );
 
         // $helper_files = glob(Router::config('templates.helpers_path') . '/*');
@@ -175,14 +182,14 @@ class Lightncandy implements \Pimple\ServiceProviderInterface
     protected function getBlockHelpers() {
         return array(
             // core helpers
-            'content_for' => 'Hook\\View\\BlockHelper::content_for',
+            'content_for' => 'Slim\\Views\\Helpers\\BlockHelper::content_for',
 
             // url helpers
-            'link_to' => 'Hook\\View\\BlockHelper::link_to',
+            'link_to' => 'Slim\\Views\\Helpers\\BlockHelper::link_to',
 
             // form helpers
-            'form' => 'Hook\\View\\BlockHelper::form',
-            'form_for' => 'Hook\\View\\BlockHelper::form_for'
+            'form' => 'Slim\\Views\\Helpers\\BlockHelper::form',
+            'form_for' => 'Slim\\Views\\Helpers\\BlockHelper::form_for'
         );
     }
 
@@ -195,7 +202,7 @@ class Lightncandy implements \Pimple\ServiceProviderInterface
                 }
             }
         }
-        throw new NotFoundException("Template not found.");
+        throw new Exception("Template not found.");
     }
 
     /********************************************************************************

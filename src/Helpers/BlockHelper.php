@@ -9,7 +9,7 @@ class BlockHelper {
     //
 
     public static function content_for($context, $options) {
-        Router::getInstance()->view->yield_blocks[$context] = $options['fn']();
+        \Slim\Views\Lightncandy::$yield_blocks[$context] = $options['fn']();
         return false;
     }
 
@@ -24,7 +24,7 @@ class BlockHelper {
             array_push($args, PHP_EOL.$options['fn']());
         }
 
-        return Slim\Views\Helpers\Helper::link_to($args, $options['hash']);
+        return \Slim\Views\Helpers\Helper::link_to($args, $options['hash']);
     }
 
     //
@@ -40,7 +40,7 @@ class BlockHelper {
             $options['hash']['method'] = 'get';
         }
 
-        $html = '<form' . Slim\Views\Helpers\Helper::html_attributes($options['hash']) . '>' . "\n" .
+        $html = '<form' . \Slim\Views\Helpers\Helper::html_attributes($options['hash']) . '>' . "\n" .
             $options['fn']() .
         '</form>';
 
@@ -48,9 +48,9 @@ class BlockHelper {
     }
 
     public static function form_for($context, $options) {
-        Router::getInstance()->view->context->push($context);
-        $html = \Hook\Framework\BlockHelper::form($context, $options);
-        Router::getInstance()->view->context->pop();
+        \Slim\Views\Lightncandy::$context->push($context);
+        $html = \Slim\Views\Helpers\BlockHelper::form($context, $options);
+        \Slim\Views\Lightncandy::$context->pop();
         return $html;
     }
 

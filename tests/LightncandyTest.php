@@ -2,9 +2,9 @@
 /**
  * Slim Framework (http://slimframework.com)
  *
- * @link      https://github.com/codeguy/Slim
- * @copyright Copyright (c) 2011-2015 Josh Lockhart
- * @license   https://github.com/codeguy/Slim/blob/master/LICENSE (MIT License)
+ * @link      https://github.com/endel/slim-lightncandy-view
+ * @copyright Copyright (c) 2015 Endel Dreyer
+ * @license   https://github.com/endel/slim-lightncandy-view/blob/master/LICENSE (MIT License)
  */
 namespace Slim\Tests\Views;
 
@@ -21,18 +21,18 @@ class LightncandyTest extends \PHPUnit_Framework_TestCase
 
     public function testFetch()
     {
-        $output = $this->view->fetch('example.html', [
-            'name' => 'Josh'
+        $output = $this->view->fetch('example', [
+            'name' => 'Endel'
         ]);
 
-        $this->assertEquals("<p>Hi, my name is Josh.</p>\n", $output);
+        $this->assertEquals("<p>Hi, my name is Endel.</p>\n", $output);
     }
 
     public function testRender()
     {
-        $this->expectOutputString("<p>Hi, my name is Josh.</p>\n");
-        $this->view->render('example.html', [
-            'name' => 'Josh'
+        $this->expectOutputString("<p>Hi, my name is Endel.</p>\n");
+        $this->view->render('example', [
+            'name' => 'Endel'
         ]);
     }
 }

@@ -1,6 +1,5 @@
 <?php namespace Slim\Views\Helpers;
 
-use Hook\Http\Router;
 use Hook\Http\Request;
 
 class Helper {
@@ -11,7 +10,7 @@ class Helper {
 
     public static function yieldContent($args) {
         $content = isset($args[0]) ? $args[0] : '__yield__';
-        $yield_blocks = Router::getInstance()->view->yield_blocks;
+        $yield_blocks = Slim\Views\Lightncandy::$yield_blocks;
         return array(isset($yield_blocks[$content]) ? $yield_blocks[$content] : "", 'raw');
     }
 
@@ -33,7 +32,7 @@ class Helper {
 
     public static function link_to($args, $attributes) {
         $text = (isset($args[1])) ? $args[1] : $args[0];
-        return array('<a href="/'.$args[0].'"' . static::html_attributes($attributes) . '>' . $text . '</a>', 'raw');
+        return array('<a href="/'.$args[0].'"' . \Slim\Views\Helpers\Helper::html_attributes($attributes) . '>' . $text . '</a>', 'raw');
     }
 
     public static function stylesheet($args, $attributes) {
@@ -54,15 +53,15 @@ class Helper {
     public static function input($args, $attributes) {
         if (!isset($attributes['name']) && isset($args[0])) {
             // TODO: analyse context recursively
-            if (Router::getInstance()->view->context->count() > 0) {
-                $attributes['name'] = Router::getInstance()->view->context->top() . '['.$args[0].']';
+            if (Slim\Views\Lightncandy::$context->count() > 0) {
+                $attributes['name'] = Slim\Views\Lightncandy::$context->top() . '['.$args[0].']';
             } else {
                 $attributes['name'] = $args[0];
             }
         }
 
         if (isset($attributes['options'])) {
-            return Slim\Views\Helpers\Helper::select($args, $attributes);
+            return \Slim\Views\Helpers\Helper::select($args, $attributes);
         }
 
         // use 'text' as default input type
@@ -71,7 +70,20 @@ class Helper {
             $attributes['type'] = $is_type_as_name ? $attributes['name'] : 'text';
         }
 
-        return array('<input' . static::html_attributes($attributes) . ' />', 'raw');
+        return array('<input' . \Slim\Views\Helpers\Helper::html_attributes($attributes) . ' />', 'raw');
+    }
+
+    public static function textarea($args, $attributes) {
+        if (!isset($attributes['name']) && isset($args[0])) {
+            // TODO: analyse context recursively
+            if (Slim\Views\Lightncandy::$context->count() > 0) {
+                $attributes['name'] = Slim\Views\Lightncandy::$context->top() . '['.$args[0].']';
+            } else {
+                $attributes['name'] = $args[0];
+            }
+        }
+
+        return array('<textarea' . \Slim\Views\Helpers\Helper::html_attributes($attributes) . '></textarea>', 'raw');
     }
 
     public static function select($args, $attributes) {
@@ -80,8 +92,8 @@ class Helper {
 
         if (!isset($attributes['name']) && isset($args[0])) {
             // TODO: analyse context recursively
-            if (Router::getInstance()->view->context->count() > 0) {
-                $attributes['name'] = Router::getInstance()->view->context->top() . '['.$args[0].']';
+            if (Slim\Views\Lightncandy::$context->count() > 0) {
+                $attributes['name'] = Slim\Views\Lightncandy::$context->top() . '['.$args[0].']';
             } else {
                 $attributes['name'] = $args[0];
             }
