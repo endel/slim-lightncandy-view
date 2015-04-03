@@ -34,7 +34,7 @@ $app->register(new \Slim\Views\Lightncandy('path/to/templates', [
 
 // Define named route
 $app->get('/hello/{name}', function ($request, $response, $args) {
-    $this['view']->render('profile.html', [
+    $this['view']->render('profile', [
         'name' => $args['name']
     ]);
 })->setName('profile');
@@ -43,18 +43,9 @@ $app->get('/hello/{name}', function ($request, $response, $args) {
 $app->run();
 ```
 
-## Custom template functions
+## Examples
 
-This component exposes a custom `url_for()` function to your Lightncandy templates. You can use this function to generate complete URLs to any Slim application named route. This is an example Lightncandy template:
-
-    {% extends "layout.html" %}
-
-    {% block body %}
-    <h1>User List</h1>
-    <ul>
-        <li><a href="{{ url_for('profile', { 'name': 'josh' }) }}">Josh</a></li>
-    </ul>
-    {% endblock %}
+Take a look at the [example](example) directory for usage examples.
 
 ## Testing
 
