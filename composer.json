@@ -1,5 +1,5 @@
 {
-    "name": "endel/slim-lightncandy-View",
+    "name": "endel/slim-lightncandy-view",
     "type": "library",
     "description": "Slim Framework view helper built on top of the Handlebars/Mustache template engines, via lightncandy.",
     "keywords": ["slim","framework","view","template","handlebars","mustache"],
