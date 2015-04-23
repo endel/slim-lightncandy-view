@@ -1,7 +1,5 @@
 <?php namespace Slim\Views\Helpers;
 
-use Hook\Http\Request;
-
 class Helper {
 
     //
@@ -36,13 +34,15 @@ class Helper {
     }
 
     public static function stylesheet($args, $attributes) {
-        $url = preg_replace('/index\.php\//', '', str_finish(Request::getRootUri(), '/')) . $args[0];
+        $uri = Slim\Views\Lightncandy::$container['request']->getUri();
+        $url = preg_replace('/index\.php\//', '', Slim\Views\Helpers\Helper::str_finish($uri->getBasePath(), '/')) . $args[0];
         $media = (isset($attributes['media'])) ? $attributes['media'] : 'screen';
         return array('<link href="' . $url . '" media="' . $media . '" rel="stylesheet" />', 'raw');
     }
 
     public static function javascript($args, $attributes) {
-        $url = preg_replace('/index\.php\//', '', str_finish(Request::getRootUri(), '/')) . $args[0]; // Request::getRootUri()
+        $uri = Slim\Views\Lightncandy::$container['request']->getUri();
+        $url = preg_replace('/index\.php\//', '', Slim\Views\Helpers\Helper::str_finish($uri->getBasePath(), '/')) . $args[0];
         return array('<script src="' . $url . '"></script>', 'raw');
     }
 
@@ -143,6 +143,11 @@ class Helper {
             $tag_attributes .= ' ' . $key . '="' . $value . '"';
         }
         return $tag_attributes;
+    }
+
+    public static function str_finish($value, $cap) {
+        $quoted = preg_quote($cap, '/');
+        return preg_replace('/(?:'.$quoted.')+$/', '', $value).$cap;
     }
 
 }

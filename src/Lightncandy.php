@@ -25,6 +25,13 @@ use Exception;
 class Lightncandy implements \Pimple\ServiceProviderInterface
 {
     /**
+     * container
+     *
+     * @var \Pimple\Container
+     */
+    public static $container;
+
+    /**
      * helpers
      *
      * @var \Slim\Helper\Set
@@ -100,6 +107,9 @@ class Lightncandy implements \Pimple\ServiceProviderInterface
     {
         // Register this view with the Slim container
         $container['view'] = $this;
+
+        // TODO: the container should be tied to a single Lightncandy instance
+        static::$container = $container;
     }
 
     /********************************************************************************
