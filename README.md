@@ -23,18 +23,20 @@ $ composer require endel/slim-lightncandy-view
 ## Usage
 
 ```php
-// Create Slim app
+// Create app
 $app = new \Slim\App();
 
-// Register Lightncandy View helper
-$app->register(new \Slim\Views\Lightncandy('path/to/templates', [
-    'helpers' => array(...)
-    'block_helpers' => array(...)
-]));
+// Get container
+$container = $app->getContainer();
+
+// Register component on container
+$container['view'] = function( $container ) {
+	return new \Slim\Views\LightnCandy('path/to/templates/');
+};
 
 // Define named route
 $app->get('/hello/{name}', function ($request, $response, $args) {
-    $this['view']->render('profile', [
+    return $this['view']->render('profile', [
         'name' => $args['name']
     ]);
 })->setName('profile');
