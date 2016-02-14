@@ -9,7 +9,9 @@
 namespace Slim\Views;
 
 use LightnCandy\LightnCandy as Engine;
-use LightnCandy\Runtime as LCRun3;
+use LightnCandy\Runtime;
+
+use Psr\Http\Message\ResponseInterface;
 
 use Exception;
 
@@ -22,15 +24,8 @@ use Exception;
  *
  * @link https://github.com/zordius/lightncandy
  */
-class Lightncandy implements \Pimple\ServiceProviderInterface
+class Lightncandy implements \ArrayAccess
 {
-    /**
-     * container
-     *
-     * @var \Pimple\Container
-     */
-    public static $container;
-
     /**
      * helpers
      *
@@ -98,20 +93,6 @@ class Lightncandy implements \Pimple\ServiceProviderInterface
         }
     }
 
-    /**
-     * Register service with container
-     *
-     * @param Container $container The Pimple container
-     */
-    public function register(\Pimple\Container $container)
-    {
-        // Register this view with the Slim container
-        $container['view'] = $this;
-
-        // TODO: the container should be tied to a single Lightncandy instance
-        static::$container = $container;
-    }
-
     /********************************************************************************
      * Methods
      *******************************************************************************/
@@ -139,18 +120,21 @@ class Lightncandy implements \Pimple\ServiceProviderInterface
         ));
 
         $renderer = Engine::prepare($php);
-        return $renderer(array_merge($data ?: array()), LCRun3::DEBUG_ERROR_LOG);
+        return $renderer(array_merge($data ?: array()), Runtime::DEBUG_ERROR_LOG);
     }
 
     /**
      * Output rendered template
      *
+     * @param  ResponseInterface $response
      * @param  string $template Template pathname relative to templates directory
      * @param  array $data      Associative array of template variables
      */
-    public function render($template, $data = [])
+    public function render(ResponseInterface $response, $template, $data = [])
     {
-        echo $this->fetch($template, $data);
+        $response->getBody()->write($this->fetch($template, $data));
+
+        return $response;
     }
 
 

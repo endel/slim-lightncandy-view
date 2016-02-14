@@ -8,6 +8,8 @@
  */
 namespace Slim\Tests\Views;
 
+use Slim\Views\Lightncandy;
+
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 class LightncandyTest extends \PHPUnit_Framework_TestCase
@@ -30,9 +32,28 @@ class LightncandyTest extends \PHPUnit_Framework_TestCase
 
     public function testRender()
     {
-        $this->expectOutputString("<p>Hi, my name is Endel.</p>\n");
-        $this->view->render('example', [
+
+        $mockBody = $this->getMockBuilder('Psr\Http\Message\StreamInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $mockResponse = $this->getMockBuilder('Psr\Http\Message\ResponseInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $mockBody->expects($this->once())
+            ->method('write')
+            ->with("<p>Hi, my name is Endel.</p>\n")
+            ->willReturn(28);
+
+        $mockResponse->expects($this->once())
+            ->method('getBody')
+            ->willReturn($mockBody);
+
+        $response = $this->view->render( $mockResponse, 'example', [
             'name' => 'Endel'
         ]);
+
+        $this->assertInstanceOf('Psr\Http\Message\ResponseInterface', $response);
     }
 }
