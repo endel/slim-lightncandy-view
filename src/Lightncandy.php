@@ -8,8 +8,8 @@
  */
 namespace Slim\Views;
 
-use LightnCandy as Engine;
-use LCRun3;
+use LightnCandy\LightnCandy as Engine;
+use LightnCandy\Runtime as LCRun3;
 
 use Exception;
 
