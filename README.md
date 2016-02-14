@@ -10,7 +10,7 @@ which is an extremely fast PHP implementation of
 
 You can use this component to create and render templates in your Slim Framework application.
 
-Requires Slim 3.0.x (currently as `dev-develop`)
+Requires Slim 3.x.x
 
 ## Install
 
