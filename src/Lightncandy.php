@@ -45,6 +45,8 @@ class Lightncandy implements \Pimple\ServiceProviderInterface
      */
     public $block_helpers;
 
+    private $flags = array();
+
     /**
      * context
      *
@@ -96,6 +98,10 @@ class Lightncandy implements \Pimple\ServiceProviderInterface
         if (isset($settings['helpers'])) {
             $this->block_helpers = array_merge($this->block_helpers, $settings['block_helpers']);
         }
+
+        if (isset($settings['flags'])) {
+            $this->flags = $settings['flags'];
+        }
     }
 
     /**
@@ -128,7 +134,7 @@ class Lightncandy implements \Pimple\ServiceProviderInterface
     {
         $data = array_merge($this->defaultVariables, $data);
         $php = Engine::compile($this->getTemplate($template), array(
-            'flags' => Engine::FLAG_ERROR_EXCEPTION | Engine::FLAG_ERROR_LOG |
+            'flags' => !empty($this->flags) ? $this->flags : Engine::FLAG_ERROR_EXCEPTION | Engine::FLAG_ERROR_LOG |
             Engine::FLAG_INSTANCE |
             Engine::FLAG_MUSTACHE |
             Engine::FLAG_HANDLEBARS,
