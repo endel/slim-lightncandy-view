@@ -93,7 +93,7 @@ class Lightncandy implements \Pimple\ServiceProviderInterface
         }
 
         $this->block_helpers = $this->getBlockHelpers();
-        if (isset($settings['helpers'])) {
+        if (isset($settings['block_helpers'])) {
             $this->block_helpers = array_merge($this->block_helpers, $settings['block_helpers']);
         }
     }
