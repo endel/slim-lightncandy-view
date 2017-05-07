@@ -22,7 +22,7 @@ use Exception;
  *
  * @link https://github.com/zordius/lightncandy
  */
-class Lightncandy implements \Pimple\ServiceProviderInterface
+class Lightncandy implements \Pimple\ServiceProviderInterface, \ArrayAccess, \IteratorAggregate, \Countable
 {
     /**
      * container
